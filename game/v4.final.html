@@ -9,7 +9,7 @@
 
 <body> 
 
-  <table id="controls">
+  <table id="controls" style="display:none;">
     <tr>
       <td colspan="2">
         <a href='v1.straight.html'>straight</a> |
@@ -63,7 +63,7 @@
     </tr>
   </table>
 
-  <div id='instructions'>
+  <div id='instructions' style="display:none;">
     <p>Use the <b>arrow keys</b> to drive the car.</p>
   </div>
 
@@ -100,7 +100,7 @@
 
     var fps            = 60;                      // how many 'update' frames per second
     var step           = 1/fps;                   // how long is each frame (in seconds)
-    var width          = 1024;                    // logical canvas width
+    var width          = 1280;                    // logical canvas width
     var height         = 768;                     // logical canvas height
     var centrifugal    = 0.3;                     // centrifugal force multiplier when going around curves
     var offRoadDecel   = 0.99;                    // speed multiplier when off road (e.g. you lose 2% speed each update frame)
