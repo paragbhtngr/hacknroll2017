@@ -73,6 +73,8 @@
       <span id="current_lap_time" class="hud">Time: <span id="current_lap_time_value" class="value">0.0</span></span> 
       <span id="last_lap_time"    class="hud">Last Lap: <span id="last_lap_time_value" class="value">0.0</span></span>
       <span id="fast_lap_time"    class="hud">Fastest Lap: <span id="fast_lap_time_value" class="value">0.0</span></span>
+      <span id="x_dist"    class="hud">X Distance: <span id="x_dist_value" class="value">0.0</span></span>
+      <span id="future_x_dist"    class="hud">Future X Distance: <span id="future_x_dist_value" class="value">0.0</span></span>
     </div>
     <canvas id="canvas">
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
@@ -88,6 +90,12 @@
 
   <script src="stats.js"></script>
   <script src="common.js"></script>
+  <script>
+    var Socket = new WebSocket("ws://localhost:8888/");
+    Socket.onopen = function() {
+      Socket.send("Hello from the other side");
+    }
+  </script>
   <script>
 
     var fps            = 60;                      // how many 'update' frames per second
@@ -130,7 +138,7 @@
     var decel          = -maxSpeed/5;             // 'natural' deceleration rate when neither accelerating, nor braking
     var offRoadDecel   = -maxSpeed/2;             // off road deceleration is somewhere in between
     var offRoadLimit   =  maxSpeed/4;             // limit when off road deceleration no longer applies (e.g. you can always go at least this speed even when off road)
-    var totalCars      = 200;                     // total number of cars on the road
+    var totalCars      = 0;                     // total number of cars on the road
     var currentLapTime = 0;                       // current lap time
     var lastLapTime    = null;                    // last lap time
 
@@ -143,7 +151,11 @@
       speed:            { value: null, dom: Dom.get('speed_value')            },
       current_lap_time: { value: null, dom: Dom.get('current_lap_time_value') },
       last_lap_time:    { value: null, dom: Dom.get('last_lap_time_value')    },
-      fast_lap_time:    { value: null, dom: Dom.get('fast_lap_time_value')    }
+      fast_lap_time:    { value: null, dom: Dom.get('fast_lap_time_value')    },
+      x_dist:    { value: null, dom: Dom.get('x_dist_value')    
+        },
+      future_x_dist:    { value: null, dom: Dom.get('future_x_dist_value')    
+        }
     }
 
     //=========================================================================
@@ -236,7 +248,17 @@
       }
 
       updateHud('speed',            5 * Math.round(speed/500));
+      updateHud('x_dist',           playerX.toFixed(2));
       updateHud('current_lap_time', formatTime(currentLapTime));
+      // console.log(playerSegment);
+      updateHud('future_x_dist',    findSegment(position+playerZ+ (5 * Math.round(speed/500)) ).curve.toFixed(2));
+
+      x_dist_out = playerX.toFixed(2)+0;
+      future_x_dist_out = (findSegment(position+playerZ+ (5 * Math.round(speed/500)) ).curve.toFixed(2))+0;
+      Socket.send([
+        x_dist_value.innerHTML,
+        future_x_dist_value.innerHTML
+        ]);
     }
 
     //-------------------------------------------------------------------------
